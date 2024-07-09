@@ -30,4 +30,5 @@ def generate_polygon_csv(num_sides, convex=True):
     return file_path
 
 generate_polygon_csv(50, convex=True)
-generate_polygon_csv(50, convex=False) 
+generate_polygon_csv(20, convex=False) 
+

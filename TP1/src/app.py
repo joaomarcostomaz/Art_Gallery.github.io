@@ -5,7 +5,6 @@ import pandas as pd
 import base64
 import io
 import json
-import src.io_utils as io_utils
 import src.plotting as plotting
 import src.triangulation as triangulation
 import src.vertex_coloring as vertex_coloring
@@ -22,6 +21,7 @@ app.layout = dbc.Container([
         dbc.Col(html.H1("ART GALLERY PROBLEM"), width={"size": 8, "offset": 2}),
     ], justify="center"),
     
+    
     dbc.Row([
         dbc.Col([
             dcc.Upload(
@@ -35,7 +35,6 @@ app.layout = dbc.Container([
                     'borderStyle': 'dashed',
                     'borderRadius': '5px',
                     'textAlign': 'center',
-                    'margin': '10px'
                 },
                 multiple=False
             ),
@@ -46,15 +45,17 @@ app.layout = dbc.Container([
             ),
             dbc.Button('Submit Points', id='submit-points-button', color="secondary", className="w-100", style={'margin-top': '10px'}),
             dbc.Button('Triangulate', id='triangulate-button', color="info", className="w-100", style={'margin-top': '10px'}),
+            dbc.Button('Final Triangulation', id='final-triangulate-button', color="info", className="w-100", style={'margin-top': '10px'}),
             dbc.Button('Color Vertices', id='color-button', color="warning", className="w-100", style={'margin-top': '10px'}),
             dbc.Button('Cameras', id='camera-button', color="danger", className="w-100", style={'margin-top': '10px'}),
             dcc.Store(id='polygon-data'),
             dcc.Store(id='triangles-data'),
+            dcc.Store(id='final-triangulate-data'),
             dcc.Store(id='coloring-data'),
             dcc.Store(id='camera-data'),
             dcc.ConfirmDialog(
                 id='file-type-dialog',
-                message='Invalid file type. Please upload a CSV or TXT file.'
+                message='Invalid file type. Please upload a CSV, TXT or POL file.'
             ),
             html.Div(id='camera-output', style={'margin-top': '20px'})
         ], width={"size": 4}),
@@ -71,14 +72,32 @@ def parse_contents(contents, filename):
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
 
+
     if filename.endswith('.csv'):
         df = pd.read_csv(io.StringIO(decoded.decode('utf-8')), header=None)
+
+        df = df.drop(0)
+        df.iloc[:, :] = df.iloc[:, :].astype(float)
+        polygon = df.values.tolist()
     elif filename.endswith('.txt'):
         df = pd.read_csv(io.StringIO(decoded.decode('utf-8')), header=None, delimiter='\t')
+        df = df.drop(0)
+        df.iloc[:, :] = df.iloc[:, :].astype(float)
+        polygon = df.values.tolist()
+    elif filename.endswith('.pol'):
+        data = pd.read_csv(io.StringIO(decoded.decode('utf-8')), header=None, sep='\s+').T
+        polygon = []
+
+        for i in range(1, len(data[0]), 2):
+            x_fracao = str(data.iloc[i,0]).split('/')
+            y_fracao = str(data.iloc[i + 1,0]).split('/')
+            
+            x = float(x_fracao[0]) / float(x_fracao[1])
+            y = float(y_fracao[0]) / float(y_fracao[1])
+            polygon.append([x, y])        
     else:
         return None
-
-    polygon = df.values.tolist()
+    print(polygon)
     return polygon
 
 def parse_manual_input(input_string):
@@ -100,6 +119,7 @@ def parse_manual_input(input_string):
     Input('upload-polygon', 'contents'),
     Input('submit-points-button', 'n_clicks'),
     Input('triangulate-button', 'n_clicks'),
+    Input('final-triangulate-button', 'n_clicks'),
     Input('color-button', 'n_clicks'),
     Input('camera-button', 'n_clicks'),
     State('upload-polygon', 'filename'),
@@ -109,32 +129,40 @@ def parse_manual_input(input_string):
     State('coloring-data', 'data'),
     State('camera-data', 'data')
 )
-def update_graph(contents, submit_points_clicks, triangulate_clicks, color_clicks, camera_clicks, filename, manual_input, polygon, triangles, coloring, camera_data):
+def update_graph(contents, submit_points_clicks, triangulate_clicks,final_triangles_clicks, color_clicks, camera_clicks, filename, manual_input, polygon, triangles, coloring, camera_data):
     ctx = callback_context
     if not ctx.triggered:
-        return False, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+        return False, dash.no_update,dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
 
     button_id = ctx.triggered[0]['prop_id'].split('.')[0]
     print(f"Button {button_id} clicked")
 
     if button_id == 'upload-polygon' and contents:
+        print("entrei")
         polygon = parse_contents(contents, filename)
         if polygon is None:
-            return True, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return True, dash.no_update,dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
         fig = plotting.plot_polygon(polygon)
-        return False, polygon, dash.no_update, dash.no_update, dash.no_update, fig, dash.no_update
+        return False, polygon,dash.no_update, dash.no_update, dash.no_update, fig, dash.no_update
 
     if button_id == 'submit-points-button' and submit_points_clicks > 0:
         polygon = parse_manual_input(manual_input)
         if polygon is None:
-            return True, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return True, dash.no_update,dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
         fig = plotting.plot_polygon(polygon)
-        return False, polygon, dash.no_update, dash.no_update, dash.no_update, fig, dash.no_update
+        return False, polygon,dash.no_update, dash.no_update, dash.no_update, fig, dash.no_update
 
     if button_id == 'triangulate-button' and triangulate_clicks > 0 and polygon:
-        triangles = triangulation.ear_clipping_triangulation(polygon)
-        fig = plotting.animate_triangulation(polygon, triangles)
-        return False, polygon, triangles, dash.no_update, dash.no_update, fig, dash.no_update
+        if not triangles:
+            triangles = triangulation.ear_clipping_triangulation(polygon)        
+        fig = plotting.plot_test(polygon)
+        return False, polygon, triangles,dash.no_update, dash.no_update, dash.no_update, fig, dash.no_update
+    
+    if button_id == 'final-triangulate-button' and final_triangles_clicks > 0 and polygon:
+        if not triangles:
+            triangles = triangulation.ear_clipping_triangulation(polygon)        
+        fig = plotting.animate_triangulation(polygon,triangles)
+        return False, polygon, triangles,dash.no_update, dash.no_update, fig, dash.no_update
 
     if button_id == 'color-button' and color_clicks > 0 and polygon:
         if not triangles:
@@ -142,7 +170,7 @@ def update_graph(contents, submit_points_clicks, triangulate_clicks, color_click
         coloring = vertex_coloring.color_vertices(triangles)
         coloring_serializable = {str(k): v for k, v in coloring.items()}
         fig = plotting.plot_colored_polygon(polygon, coloring)
-        return False, polygon, triangles, coloring_serializable, dash.no_update, fig, dash.no_update
+        return False, polygon,triangles, coloring_serializable, dash.no_update, fig, dash.no_update
 
     if button_id == 'camera-button' and camera_clicks > 0 and polygon:
         if not triangles:
@@ -155,9 +183,9 @@ def update_graph(contents, submit_points_clicks, triangulate_clicks, color_click
         camera_message = dbc.Alert(
             f'Minimum number of cameras needed: {num_cameras}', color="info", style={'margin-top': '20px'}
         )
-        return False, polygon, triangles, coloring, camera_positions, fig, camera_message
+        return False, polygon,triangles, coloring, camera_positions, fig, camera_message
 
-    return False, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+    return False, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update,dash.no_update
 
 if __name__ == '__main__':
     print("Starting the Dash app server...")
