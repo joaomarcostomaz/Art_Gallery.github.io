@@ -11,7 +11,8 @@ def plot_polygon(polygon):
 
 def plot_colored_polygon(polygon, coloring):
     x, y = zip(*polygon)
-    colors = [coloring[tuple(vertex)] for vertex in polygon]
+    colors = [coloring[tuple(vertex)] for vertex in polygon] + [coloring[tuple(polygon[0])]]
+    print(colors)
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=x + (x[0],), y=y + (y[0],), 
                              mode='lines+markers', 

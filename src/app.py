@@ -70,7 +70,7 @@ print("Layout set up")
 
 def parse_contents(contents, filename):
     content_type, content_string = contents.split(',')
-    decoded = base64.b64decode(content_string)
+    decoded = base64.b64decode(content_string).replace(b'\n', b' ')
 
 
     if filename.endswith('.csv'):
@@ -172,6 +172,7 @@ def update_graph(contents, submit_points_clicks, triangulate_clicks,final_triang
     if button_id == 'color-button' and color_clicks > 0 and polygon:
         triangles = triangulation.ear_clipping_triangulation(polygon)
         coloring = vertex_coloring.color_vertices(triangles)
+        print(coloring)
         coloring_serializable = {str(k): v for k, v in coloring.items()}
         fig = plotting.plot_colored_polygon(polygon, coloring)
         return False, polygon,triangles, coloring_serializable, dash.no_update, fig, dash.no_update
