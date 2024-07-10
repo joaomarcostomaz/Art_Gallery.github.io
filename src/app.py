@@ -17,7 +17,7 @@ print("Initializing the Dash app")
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
-app.layout = dbc.Container([
+app.layout = dbc.Container(fluid=True,children=[
     dbc.Row([
         dbc.Col(html.H1("ART GALLERY PROBLEM",style={"margin-bottom": "40px","margin-top": "20px"}), width={"size": 8, "offset": 2}),
     ], justify="center"),
@@ -36,21 +36,22 @@ app.layout = dbc.Container([
                     'borderStyle': 'dashed',
                     'borderRadius': '5px',
                     'textAlign': 'center',
+                    "margin-left": "30px",
                 },
                 multiple=False
             ),
             dcc.Textarea(
                 id='manual-polygon-input',
                 placeholder='Enter polygon points as x,y pairs, one per line',
-                style={'width': '100%', 'height': '100px', 'margin-top': '10px'}
+                style={'width': '100%', 'height': '100px', 'margin-top': '10px',"margin-left": "30px",}
             ),
-            dbc.Button('Submit Points', id='submit-points-button', color="secondary", className="w-100", style={'margin-top': '10px'}),
-            dbc.Button('See polygon', id='see-polygon-button', color="primary", className="w-100", style={'margin-top': '10px'}),
-            dbc.Button('Triangulate', id='triangulate-button', color="info", className="w-100", style={'margin-top': '10px'}),
-            dbc.Button('Final Triangulation', id='final-triangulate-button', color="info", className="w-100", style={'margin-top': '10px'}),
-            dbc.Button('Color Vertices', id='color-button', color="warning", className="w-100", style={'margin-top': '10px'}),
-            dbc.Button('Final Coloring', id='final-coloring-button', color="warning", className="w-100", style={'margin-top': '10px'}),
-            dbc.Button('Cameras', id='camera-button', color="danger", className="w-100", style={'margin-top': '10px'}),
+            dbc.Button('Submit Points', id='submit-points-button', color="secondary", className="w-100", style={'margin-top': '10px',"margin-left": "30px",}),
+            dbc.Button('See polygon', id='see-polygon-button', color="primary", className="w-100", style={'margin-top': '10px',"margin-left": "30px",}),
+            dbc.Button('Triangulate', id='triangulate-button', color="info", className="w-100", style={'margin-top': '10px',"margin-left": "30px",}),
+            dbc.Button('Final Triangulation', id='final-triangulate-button', color="info", className="w-100", style={'margin-top': '10px',"margin-left": "30px",}),
+            dbc.Button('Color Vertices', id='color-button', color="warning", className="w-100", style={'margin-top': '10px',"margin-left": "30px",}),
+            dbc.Button('Final Coloring', id='final-coloring-button', color="warning", className="w-100", style={'margin-top': '10px',"margin-left": "30px",}),
+            dbc.Button('Cameras', id='camera-button', color="danger", className="w-100", style={'margin-top': '10px',"margin-left": "30px",}),
             dcc.Store(id='polygon-data'),
             dcc.Store(id='see-polygon-data'),
             dcc.Store(id='triangles-data'),
@@ -62,12 +63,12 @@ app.layout = dbc.Container([
                 id='file-type-dialog',
                 message='Invalid file type. Please upload a CSV, TXT or POL file.'
             ),
-            html.Div(id='camera-output', style={'margin-top': '20px'})
-        ], width={"size": 4}),
+            html.Div(id='camera-output', style={'margin-top': '20px',"margin-left": "30px",})
+        ], width={"size": 3}),
         
         dbc.Col([
-            dcc.Graph(id='polygon-graph')
-        ], width={"size": 8})
+            dcc.Graph(id='polygon-graph',style={'margin-top': '30px',"margin-left": "50px",})
+        ], width={"size": 9})
     ]),
 ], style={'backgroundColor': '#e6f2ff'})
 
