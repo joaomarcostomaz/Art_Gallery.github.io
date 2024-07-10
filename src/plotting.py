@@ -175,30 +175,17 @@ def animate_triangulation_2(polygon):
             if is_ear(remaining_vertices, i):
                 triangles.append([prev, curr, next])
                 del remaining_vertices[i]
-                
-                frames.append(go.Frame(data=[
-                    go.Scatter(x=x + (x[0],), y=y + (y[0],), 
-                               mode='lines', name='Polygon'),
-                    go.Scatter(x=[point[0] for triangle in triangles for point in triangle] + [triangles[-1][0][0]],
-                               y=[point[1] for triangle in triangles for point in triangle] + [triangles[-1][0][1]],
-                               mode='lines', name='Triangles')
-                ]))
+
                 
                 break
     triangles.append(remaining_vertices)
-    frames.append(go.Frame(data=[
-        go.Scatter(x=x + (x[0],), y=y + (y[0],), 
-                   mode='lines', name='Polygon'),
-        go.Scatter(x=[point[0] for triangle in triangles for point in triangle] + [triangles[-1][0][0]],
-                   y=[point[1] for triangle in triangles for point in triangle] + [triangles[-1][0][1]],
-                   mode='lines', name='Triangles')
-    ]))
     
     return frames
 
 def plot_test(polygon):
     x, y = zip(*polygon)
     frames = animate_triangulation_2(polygon)
+    print("entrei")
     fig = go.Figure(
         data=[
             go.Scatter(x=x + (x[0],), y=y + (y[0],), 

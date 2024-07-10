@@ -39,4 +39,4 @@ Para executar o projeto localmente, siga estas instruções:
 
 ## Acesso à Página
 
-Visite a página do projeto em [https://joaomarcostomaz.github.io/Art_Gallery.github.io/](https://joaomarcostomaz.github.io/Art_Gallery.github.io/).
+Visite a página do trabalho em [https://joaomarcostomaz.github.io/Art_Gallery.github.io/](https://joaomarcostomaz.github.io/Art_Gallery.github.io/).
