@@ -146,7 +146,6 @@ def update_graph(contents, submit_points_clicks, triangulate_clicks,final_triang
     print(f"Button {button_id} clicked")
 
     if button_id == 'upload-polygon' and contents:
-        print("entrei")
         polygon = parse_contents(contents, filename)
         if polygon is None:
             return True, dash.no_update,dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
@@ -161,38 +160,33 @@ def update_graph(contents, submit_points_clicks, triangulate_clicks,final_triang
         return False, polygon,dash.no_update, dash.no_update, dash.no_update, fig, dash.no_update
 
     if button_id == 'triangulate-button' and triangulate_clicks > 0 and polygon:
-        if not triangles:
-            triangles = triangulation.ear_clipping_triangulation(polygon)        
-        fig = plotting.plot_test(polygon)
-        return False, polygon, triangles,dash.no_update, dash.no_update, dash.no_update, fig, dash.no_update
+        triangles = triangulation.ear_clipping_triangulation(polygon)        
+        fig = triangulation.plot_triangulation(polygon)
+        return False, polygon,triangles,dash.no_update, dash.no_update, fig, dash.no_update
     
     if button_id == 'final-triangulate-button' and final_triangles_clicks > 0 and polygon:
-        if not triangles:
-            triangles = triangulation.ear_clipping_triangulation(polygon)        
-        fig = plotting.animate_triangulation(polygon,triangles)
+        triangles = triangulation.ear_clipping_triangulation(polygon)        
+        fig = triangulation.plot_triangles(polygon,triangles)
         return False, polygon, triangles,dash.no_update, dash.no_update, fig, dash.no_update
 
     if button_id == 'color-button' and color_clicks > 0 and polygon:
-        if not triangles:
-            triangles = triangulation.ear_clipping_triangulation(polygon)
+        triangles = triangulation.ear_clipping_triangulation(polygon)
         coloring = vertex_coloring.color_vertices(triangles)
         coloring_serializable = {str(k): v for k, v in coloring.items()}
-        print(coloring)
         fig = plotting.plot_colored_polygon(polygon, coloring)
         return False, polygon,triangles, coloring_serializable, dash.no_update, fig, dash.no_update
 
     if button_id == 'camera-button' and camera_clicks > 0 and polygon:
-        if not triangles:
-            triangles = triangulation.ear_clipping_triangulation(polygon)
-        if not coloring:
-            coloring = vertex_coloring.color_vertices(triangles)
+        triangles = triangulation.ear_clipping_triangulation(polygon)
+        coloring = vertex_coloring.color_vertices(triangles)
+        coloring_serializable = {str(k): v for k, v in coloring.items()}
         camera_positions = vertex_coloring.minimum_camera_positions(triangles)
         fig = plotting.animate_cameras(polygon, camera_positions)
         num_cameras = len(camera_positions)
         camera_message = dbc.Alert(
             f'Minimum number of cameras needed: {num_cameras}', color="info", style={'margin-top': '20px'}
         )
-        return False, polygon,triangles, coloring, camera_positions, fig, camera_message
+        return False, polygon,triangles, coloring_serializable, camera_positions, fig, camera_message
 
     return False, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update,dash.no_update
 

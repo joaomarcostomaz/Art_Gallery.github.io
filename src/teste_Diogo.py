@@ -370,3 +370,55 @@ def update_graph(contents, submit_points_clicks, triangulate_clicks, color_click
 if __name__ == '__main__':
     print("Starting the Dash app server...")
     app.run_server(debug=True)
+
+
+def plot_test(polygon):
+    x, y = zip(*polygon)
+    frames = animate_triangulation_2(polygon)
+    fig = go.Figure(
+        data=[
+            go.Scatter(x=x + (x[0],), y=y + (y[0],), 
+                    mode='lines+markers', name='Polygon', 
+                                     fill='toself')
+        ],
+        frames=frames,
+        layout=go.Layout(
+            title="Polygon Triangulation",
+            updatemenus=[dict(type='buttons', showactive=False,
+                            buttons=[
+                                dict(label='Play',
+                                    method='animate',
+                                    args=[None, dict(frame=dict(duration=500, redraw=True), 
+                                                        fromcurrent=True)]),
+                                dict(label='Pause',
+                                    method='animate',
+                                    args=[[None], dict(frame=dict(duration=0, redraw=False), 
+                                                        mode='immediate')])
+                            ])],
+        )
+    )
+     fig.update_layout(
+        updatemenus=[dict(
+            type='buttons',
+            showactive=True,
+            buttons=[dict(
+                label='Play',
+                method='animate',
+                args=[None, dict(frame=dict(duration=500, redraw=True), 
+                                 fromcurrent=True, mode='immediate')]
+            )]
+        )],
+        xaxis=dict(range=[min(x) - 1, max(x) + 1]),
+        yaxis=dict(range=[min(y) - 1, max(y) + 1])
+    )
+
+    
+    
+    fig.update_layout(
+        title="Polygon Final Triangulation",
+        xaxis_title="X Axis",
+        yaxis_title="Y Axis",
+        showlegend=True
+    )
+
+    return fig
