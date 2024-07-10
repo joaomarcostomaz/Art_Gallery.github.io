@@ -1,20 +1,3 @@
-# Art Gallery
-
-https://joaomarcostomaz.github.io/Art_Gallery.github.io/
-
-Ideia do projeto:
-
-Para rodar
-
-pip install -r requirements.txt
-
-cd TP1
-
-create a venv 
-%python -m venv venv
-%source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-
-run python -m src.app
 
 # Art Gallery
 
@@ -42,4 +25,18 @@ Para executar o projeto localmente, siga estas instruções:
    ```bash
    pip install -r requirements.txt
 
-4.
+4. Crie e ative um ambiente virtual (opcional, mas recomendado):
+   ```bash
+   python -m venv venv       # Cria o ambiente virtual
+   source venv/bin/activate  # Ativa o ambiente virtual (Linux/macOS)
+   # Ou no Windows use: venv\Scripts\activate
+
+5. Inicie a aplicação:
+   ```bash
+   python -m src.app
+
+6. Abra um navegador e acesse http://localhost:5000 para utilizar.
+
+## Acesso à Página
+
+Visite a página do projeto em [https://joaomarcostomaz.github.io/Art_Gallery.github.io/](https://joaomarcostomaz.github.io/Art_Gallery.github.io/).
