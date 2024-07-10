@@ -88,13 +88,21 @@ def parse_contents(contents, filename):
         data = pd.read_csv(io.StringIO(decoded.decode('utf-8')), header=None, sep='\s+').T
         polygon = []
 
-        for i in range(1, len(data[0]), 2):
-            x_fracao = str(data.iloc[i,0]).split('/')
-            y_fracao = str(data.iloc[i + 1,0]).split('/')
-            
-            x = float(x_fracao[0]) / float(x_fracao[1])
-            y = float(y_fracao[0]) / float(y_fracao[1])
-            polygon.append([x, y])        
+        if(len(data[0]) > 2):
+            for i in range(1, len(data[0]), 2):
+                x_fracao = str(data.iloc[i,0]).split('/')
+                y_fracao = str(data.iloc[i + 1,0]).split('/')
+                
+                x = float(x_fracao[0]) / float(x_fracao[1])
+                y = float(y_fracao[0]) / float(y_fracao[1])
+                polygon.append([x, y])   
+        else:
+            for i in range(0, data.shape[1]):
+                x_fracao = str(data.iloc[0, i]).split('/')
+                y_fracao = str(data.iloc[1, i]).split('/')     
+                x = float(x_fracao[0]) / float(x_fracao[1])
+                y = float(y_fracao[0]) / float(y_fracao[1])
+                polygon.append([x, y])
     else:
         return None
     print(polygon)
@@ -169,6 +177,7 @@ def update_graph(contents, submit_points_clicks, triangulate_clicks,final_triang
             triangles = triangulation.ear_clipping_triangulation(polygon)
         coloring = vertex_coloring.color_vertices(triangles)
         coloring_serializable = {str(k): v for k, v in coloring.items()}
+        print(coloring)
         fig = plotting.plot_colored_polygon(polygon, coloring)
         return False, polygon,triangles, coloring_serializable, dash.no_update, fig, dash.no_update
 
