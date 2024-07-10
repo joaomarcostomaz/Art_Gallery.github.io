@@ -9,6 +9,7 @@ import src.plotting as plotting
 import src.triangulation as triangulation
 import src.vertex_coloring as vertex_coloring
 from dash.exceptions import PreventUpdate
+from src.io_utils import parse_contents,parse_manual_input
 
 print("Initializing the Dash app")
 
@@ -18,7 +19,7 @@ server = app.server
 
 app.layout = dbc.Container([
     dbc.Row([
-        dbc.Col(html.H1("ART GALLERY PROBLEM"), width={"size": 8, "offset": 2}),
+        dbc.Col(html.H1("ART GALLERY PROBLEM",style={"margin-bottom": "40px","margin-top": "20px"}), width={"size": 8, "offset": 2}),
     ], justify="center"),
     
     
@@ -26,7 +27,7 @@ app.layout = dbc.Container([
         dbc.Col([
             dcc.Upload(
                 id='upload-polygon',
-                children=dbc.Button("Drag and Drop or Select a Polygon File", color="primary", className="w-100"),
+                children=dbc.Button("Drag and Drop or Select a Polygon File", color="secondary", className="w-100"),
                 style={
                     'width': '100%',
                     'height': '60px',
@@ -44,13 +45,17 @@ app.layout = dbc.Container([
                 style={'width': '100%', 'height': '100px', 'margin-top': '10px'}
             ),
             dbc.Button('Submit Points', id='submit-points-button', color="secondary", className="w-100", style={'margin-top': '10px'}),
+            dbc.Button('See polygon', id='see-polygon-button', color="primary", className="w-100", style={'margin-top': '10px'}),
             dbc.Button('Triangulate', id='triangulate-button', color="info", className="w-100", style={'margin-top': '10px'}),
             dbc.Button('Final Triangulation', id='final-triangulate-button', color="info", className="w-100", style={'margin-top': '10px'}),
             dbc.Button('Color Vertices', id='color-button', color="warning", className="w-100", style={'margin-top': '10px'}),
+            dbc.Button('Final Coloring', id='final-coloring-button', color="warning", className="w-100", style={'margin-top': '10px'}),
             dbc.Button('Cameras', id='camera-button', color="danger", className="w-100", style={'margin-top': '10px'}),
             dcc.Store(id='polygon-data'),
+            dcc.Store(id='see-polygon-data'),
             dcc.Store(id='triangles-data'),
             dcc.Store(id='final-triangulate-data'),
+            dcc.Store(id='final-coloring-data'),
             dcc.Store(id='coloring-data'),
             dcc.Store(id='camera-data'),
             dcc.ConfirmDialog(
@@ -68,54 +73,6 @@ app.layout = dbc.Container([
 
 print("Layout set up")
 
-def parse_contents(contents, filename):
-    content_type, content_string = contents.split(',')
-    decoded = base64.b64decode(content_string).replace(b'\n', b' ')
-
-
-    if filename.endswith('.csv'):
-        df = pd.read_csv(io.StringIO(decoded.decode('utf-8')), header=None)
-
-        df = df.drop(0)
-        df.iloc[:, :] = df.iloc[:, :].astype(float)
-        polygon = df.values.tolist()
-    elif filename.endswith('.txt'):
-        df = pd.read_csv(io.StringIO(decoded.decode('utf-8')), header=None, delimiter='\t')
-        df = df.drop(0)
-        df.iloc[:, :] = df.iloc[:, :].astype(float)
-        polygon = df.values.tolist()
-    elif filename.endswith('.pol'):
-        data = pd.read_csv(io.StringIO(decoded.decode('utf-8')), header=None, sep='\s+').T
-        polygon = []
-
-        if(len(data[0]) > 2):
-            for i in range(1, len(data[0]), 2):
-                x_fracao = str(data.iloc[i,0]).split('/')
-                y_fracao = str(data.iloc[i + 1,0]).split('/')
-                
-                x = float(x_fracao[0]) / float(x_fracao[1])
-                y = float(y_fracao[0]) / float(y_fracao[1])
-                polygon.append([x, y])   
-        else:
-            for i in range(0, data.shape[1]):
-                x_fracao = str(data.iloc[0, i]).split('/')
-                y_fracao = str(data.iloc[1, i]).split('/')     
-                x = float(x_fracao[0]) / float(x_fracao[1])
-                y = float(y_fracao[0]) / float(y_fracao[1])
-                polygon.append([x, y])
-    else:
-        return None
-    print(polygon)
-    return polygon
-
-def parse_manual_input(input_string):
-    try:
-        lines = input_string.strip().split('\n')
-        polygon = [list(map(float, line.split(','))) for line in lines]
-        return polygon
-    except ValueError:
-        return None
-
 @app.callback(
     Output('file-type-dialog', 'displayed'),
     Output('polygon-data', 'data'),
@@ -124,12 +81,16 @@ def parse_manual_input(input_string):
     Output('camera-data', 'data'),
     Output('polygon-graph', 'figure'),
     Output('camera-output', 'children'),
+    
     Input('upload-polygon', 'contents'),
     Input('submit-points-button', 'n_clicks'),
+    Input('see-polygon-button', 'n_clicks'),
     Input('triangulate-button', 'n_clicks'),
     Input('final-triangulate-button', 'n_clicks'),
     Input('color-button', 'n_clicks'),
+    Input('final-coloring-button', 'n_clicks'),
     Input('camera-button', 'n_clicks'),
+    
     State('upload-polygon', 'filename'),
     State('manual-polygon-input', 'value'),
     State('polygon-data', 'data'),
@@ -137,13 +98,14 @@ def parse_manual_input(input_string):
     State('coloring-data', 'data'),
     State('camera-data', 'data')
 )
-def update_graph(contents, submit_points_clicks, triangulate_clicks,final_triangles_clicks, color_clicks, camera_clicks, filename, manual_input, polygon, triangles, coloring, camera_data):
+def update_graph(contents, submit_points_clicks,see_polygon_clicks, triangulate_clicks,final_triangles_clicks, color_clicks,final_coloring_clicks, camera_clicks, filename, manual_input, polygon, triangles, coloring, camera_data):
     ctx = callback_context
     if not ctx.triggered:
         return False, dash.no_update,dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
 
     button_id = ctx.triggered[0]['prop_id'].split('.')[0]
     print(f"Button {button_id} clicked")
+
 
     if button_id == 'upload-polygon' and contents:
         polygon = parse_contents(contents, filename)
@@ -154,6 +116,12 @@ def update_graph(contents, submit_points_clicks, triangulate_clicks,final_triang
 
     if button_id == 'submit-points-button' and submit_points_clicks > 0:
         polygon = parse_manual_input(manual_input)
+        if polygon is None:
+            return True, dash.no_update,dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+        fig = plotting.plot_polygon(polygon)
+        return False, polygon,dash.no_update, dash.no_update, dash.no_update, fig, dash.no_update
+
+    if button_id == 'see-polygon-button' and see_polygon_clicks > 0:
         if polygon is None:
             return True, dash.no_update,dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
         fig = plotting.plot_polygon(polygon)
@@ -172,7 +140,13 @@ def update_graph(contents, submit_points_clicks, triangulate_clicks,final_triang
     if button_id == 'color-button' and color_clicks > 0 and polygon:
         triangles = triangulation.ear_clipping_triangulation(polygon)
         coloring = vertex_coloring.color_vertices(triangles)
-        print(coloring)
+        coloring_serializable = {str(k): v for k, v in coloring.items()}
+        fig = vertex_coloring.plot_coloring(polygon,triangles)
+        return False, polygon,triangles, coloring_serializable, dash.no_update, fig, dash.no_update
+
+    if button_id == 'final-coloring-button' and final_coloring_clicks > 0 and polygon:
+        triangles = triangulation.ear_clipping_triangulation(polygon)
+        coloring = vertex_coloring.color_vertices(triangles)
         coloring_serializable = {str(k): v for k, v in coloring.items()}
         fig = plotting.plot_colored_polygon(polygon, coloring)
         return False, polygon,triangles, coloring_serializable, dash.no_update, fig, dash.no_update

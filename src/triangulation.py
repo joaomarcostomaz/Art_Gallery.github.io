@@ -111,7 +111,6 @@ def animate_triangulation(polygon):
     remaining_vertices = polygon[:]
     triangles = []
     frames = []
-    contador = 0
     while len(remaining_vertices) > 3:
         for i in range(len(remaining_vertices)):
             prev = remaining_vertices[i-1]
