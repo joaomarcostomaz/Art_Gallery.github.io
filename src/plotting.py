@@ -16,7 +16,6 @@ def plot_colored_polygon(polygon, coloring):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=x + (x[0],), y=y + (y[0],), 
                              mode='lines+markers', 
-                             line=dict(width=1, color='black'),
                              marker=dict(color=colors, size=10),
                              name='Polygon'))
     return fig
@@ -25,8 +24,7 @@ def animate_cameras(polygon, cameras):
     x, y = zip(*polygon)
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=x + (x[0],), y=y + (y[0],), 
-                             mode='lines+markers',
-                            line=dict(width=1, color='black'),
+                             mode='lines+markers', 
                              name='Polygon'))
 
     camera_x = [camera[0] for camera in cameras]
@@ -64,7 +62,7 @@ def animate_cameras(polygon, cameras):
     )
 
     fig.update_layout(
-        title="Polygon with Cameras",
+        title=f"Polygon with {len(cameras)} Cameras",
         xaxis_title="X Axis",
         yaxis_title="Y Axis",
         showlegend=True

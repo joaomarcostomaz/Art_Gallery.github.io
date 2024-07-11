@@ -5,25 +5,25 @@ import plotly.graph_objects as go
 def create_dual_graph(triangles):
     G = nx.Graph()
     
-    index_to_triangle = {i: tuple(tuple(vertex) for vertex in triangle) for i, triangle in enumerate(triangles)}
+    trianglesIndexMap = {i: tuple(tuple(vertex) for vertex in triangle) for i, triangle in enumerate(triangles)}
 
-    for i, triangle in index_to_triangle.items():
+    for i, triangle in trianglesIndexMap.items():
         for j in range(i + 1, len(triangles)):
-            diagionalVertices = set(triangle).intersection(set(index_to_triangle[j]))
+            diagionalVertices = set(triangle).intersection(set(trianglesIndexMap[j]))
             if len(diagionalVertices) == 2:
                 G.add_edge(i, j)
     
-    return G, index_to_triangle
+    return G, trianglesIndexMap
 
 def color_vertices(triangles):
-    dual_graph, index_to_triangle = create_dual_graph(triangles)
+    dual_graph, trianglesIndexMap = create_dual_graph(triangles)
     vertexColors = {}
     colorNames = ['purple', 'green', 'blue']
     visited = set()
 
     def dfs(index):
         visited.add(index)
-        triangle = index_to_triangle[index]
+        triangle = trianglesIndexMap[index]
         colorSet = set(colorNames)
         
         for vertex in triangle:
@@ -59,7 +59,7 @@ def minimum_camera_positions(triangles):
 
 def animate_colorization(triangles,polygon):
     x, y = zip(*polygon)
-    dual_graph, index_to_triangle = create_dual_graph(triangles)
+    dual_graph, trianglesIndexMap = create_dual_graph(triangles)
     vertexColors = {}
     frames = []
     colorNames = ['purple', 'green', 'blue']
@@ -67,7 +67,7 @@ def animate_colorization(triangles,polygon):
 
     def dfs(index):
         visited.add(index)
-        triangle = index_to_triangle[index]
+        triangle = trianglesIndexMap[index]
         colorSet = set(colorNames)
         
         
@@ -84,11 +84,11 @@ def animate_colorization(triangles,polygon):
 
             if (indx in visited) and (indx != index):
                 color = []
-                for vertex in index_to_triangle[indx]:
+                for vertex in trianglesIndexMap[indx]:
                     color = color + [vertexColors[vertex]]
                 color = color + [color[0]]
                 print(color)
-                x_tri, y_tri = zip(*index_to_triangle[indx])
+                x_tri, y_tri = zip(*trianglesIndexMap[indx])
                 print(x_tri + (x_tri[0],))
                 frame_data.append(go.Scatter(x=x_tri + (x_tri[0],), y=y_tri + (y_tri[0],), 
                             mode='markers',
@@ -98,14 +98,14 @@ def animate_colorization(triangles,polygon):
                             )
                 
             elif indx == index:
-                x_tri, y_tri = zip(*index_to_triangle[indx])
+                x_tri, y_tri = zip(*trianglesIndexMap[indx])
                 frame_data.append(go.Scatter(x=x_tri + (x_tri[0],), y=y_tri + (y_tri[0],), 
                             mode='lines',
                             fill='toself',
                             fillcolor="rgba(0, 0, 0, 0.3)")
                             )
             else:
-                x_tri, y_tri = zip(*index_to_triangle[indx])
+                x_tri, y_tri = zip(*trianglesIndexMap[indx])
                 frame_data.append(go.Scatter(x=x_tri + (x_tri[0],), y=y_tri + (y_tri[0],), 
                                      mode='lines', fill=None,line=dict(width=1, color='black'),
                                      name='Triangle'))
@@ -125,10 +125,10 @@ def animate_colorization(triangles,polygon):
 
             if (indx in visited) and (indx != index):
                 color = []
-                for vertex in index_to_triangle[indx]:
+                for vertex in trianglesIndexMap[indx]:
                     color = color + [vertexColors[vertex]]
                 color = color + [color[0]]
-                x_tri, y_tri = zip(*index_to_triangle[indx])
+                x_tri, y_tri = zip(*trianglesIndexMap[indx])
                 frame_data.append(go.Scatter(x=x_tri + (x_tri[0],), y=y_tri + (y_tri[0],), 
                             mode='markers',
                             marker=dict(size=10, color=color),
@@ -138,10 +138,10 @@ def animate_colorization(triangles,polygon):
                 
             elif indx == index:
                 color = []
-                for vertex in index_to_triangle[indx]:
+                for vertex in trianglesIndexMap[indx]:
                     color = color + [vertexColors[vertex]]
                 color = color + [color[0]]
-                x_tri, y_tri = zip(*index_to_triangle[indx])
+                x_tri, y_tri = zip(*trianglesIndexMap[indx])
                 frame_data.append(go.Scatter(x=x_tri + (x_tri[0],), y=y_tri + (y_tri[0],), 
                             mode='markers',
                             marker=dict(size=10, color=color),
@@ -149,7 +149,7 @@ def animate_colorization(triangles,polygon):
                             fillcolor="rgba(0, 0, 0, 0.3)")
                             )
             else:
-                x_tri, y_tri = zip(*index_to_triangle[indx])
+                x_tri, y_tri = zip(*trianglesIndexMap[indx])
                 frame_data.append(go.Scatter(x=x_tri + (x_tri[0],), y=y_tri + (y_tri[0],), 
                                      mode='lines', fill=None,line=dict(width=1, color='black'),
                                      name='Triangle'))
@@ -170,7 +170,7 @@ def plot_coloring(polygon,triangles):
     x, y = zip(*polygon)
     fig = go.Figure()
     
-    dual_graph, index_to_triangle = create_dual_graph(triangles)
+    dual_graph, trianglesIndexMap = create_dual_graph(triangles)
 
     fig.add_trace(go.Scatter(x=x + (x[0],), y=y + (y[0],), 
                              mode='lines+markers', 
@@ -178,7 +178,7 @@ def plot_coloring(polygon,triangles):
                              name='Polygon'))
     
     for indx in dual_graph.nodes:
-        x_tri, y_tri = zip(*index_to_triangle[indx])
+        x_tri, y_tri = zip(*trianglesIndexMap[indx])
         fig.add_trace(go.Scatter(x=x_tri + (x_tri[0],), y=y_tri + (y_tri[0],), 
                                      mode='lines', fill=None,line=dict(width=1, color='black'),
                                      name='Triangle'))

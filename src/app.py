@@ -126,16 +126,19 @@ def update_graph(contents, submit_points_clicks,see_polygon_clicks, triangulate_
         if polygon is None:
             return True, dash.no_update,dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
         fig = plotting.plot_polygon(polygon)
+        fig.write_html(f"data/polygon-{len(polygon)}/polygon.html", full_html=False, include_plotlyjs='cdn', auto_play=False)
         return False, polygon,dash.no_update, dash.no_update, dash.no_update, fig, dash.no_update
 
     if button_id == 'triangulate-button' and triangulate_clicks > 0 and polygon:
         triangles = triangulation.ear_clipping_triangulation(polygon)        
         fig = triangulation.plot_triangulation(polygon)
+        fig.write_html(f"data/polygon-{len(polygon)}/triangulation.html", full_html=False, include_plotlyjs='cdn', auto_play=False)
         return False, polygon,triangles,dash.no_update, dash.no_update, fig, dash.no_update
     
     if button_id == 'final-triangulate-button' and final_triangles_clicks > 0 and polygon:
         triangles = triangulation.ear_clipping_triangulation(polygon)        
         fig = triangulation.plot_triangles(polygon,triangles)
+        fig.write_html(f"data/polygon-{len(polygon)}/final-triangulation.html", full_html=False, include_plotlyjs='cdn', auto_play=False)
         return False, polygon, triangles,dash.no_update, dash.no_update, fig, dash.no_update
 
     if button_id == 'color-button' and color_clicks > 0 and polygon:
@@ -143,6 +146,7 @@ def update_graph(contents, submit_points_clicks,see_polygon_clicks, triangulate_
         coloring = vertex_coloring.color_vertices(triangles)
         coloring_serializable = {str(k): v for k, v in coloring.items()}
         fig = vertex_coloring.plot_coloring(polygon,triangles)
+        fig.write_html(f"data/polygon-{len(polygon)}/coloring.html", full_html=False, include_plotlyjs='cdn', auto_play=False)
         return False, polygon,triangles, coloring_serializable, dash.no_update, fig, dash.no_update
 
     if button_id == 'final-coloring-button' and final_coloring_clicks > 0 and polygon:
@@ -150,6 +154,7 @@ def update_graph(contents, submit_points_clicks,see_polygon_clicks, triangulate_
         coloring = vertex_coloring.color_vertices(triangles)
         coloring_serializable = {str(k): v for k, v in coloring.items()}
         fig = plotting.plot_colored_polygon(polygon, coloring)
+        fig.write_html(f"data/polygon-{len(polygon)}/final-coloring.html", full_html=False, include_plotlyjs='cdn', auto_play=False)
         return False, polygon,triangles, coloring_serializable, dash.no_update, fig, dash.no_update
 
     if button_id == 'camera-button' and camera_clicks > 0 and polygon:
@@ -158,6 +163,7 @@ def update_graph(contents, submit_points_clicks,see_polygon_clicks, triangulate_
         coloring_serializable = {str(k): v for k, v in coloring.items()}
         camera_positions = vertex_coloring.minimum_camera_positions(triangles)
         fig = plotting.animate_cameras(polygon, camera_positions)
+        fig.write_html(f"data/polygon-{len(polygon)}/cameras.html", full_html=False, include_plotlyjs='cdn', auto_play=False)
         num_cameras = len(camera_positions)
         camera_message = dbc.Alert(
             f'Minimum number of cameras needed: {num_cameras}', color="info", style={'margin-top': '20px'}
