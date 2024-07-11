@@ -57,7 +57,7 @@ def animate_cameras(polygon, cameras):
     )
 
     fig.update_layout(
-        title="Polygon with Cameras",
+        title=f"Polygon with {len(cameras)} Cameras",
         xaxis_title="X Axis",
         yaxis_title="Y Axis",
         showlegend=True
