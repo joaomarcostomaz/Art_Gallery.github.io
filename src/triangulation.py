@@ -47,7 +47,7 @@ def ear_clipping_triangulation(polygon):
     triangles.append(remaining_vertices)
     return triangles
     
-def plot_triangles(polygon, triangles):
+def plot_triangles_dinamic(polygon, triangles):
     frames = []
     print("entrei")
     x, y = zip(*polygon)
@@ -78,16 +78,24 @@ def plot_triangles(polygon, triangles):
 
     fig.frames = frames
     fig.update_layout(
-        updatemenus=[dict(
-            type='buttons',
-            showactive=True,
-            buttons=[dict(
-                label='Play',
-                method='animate',
-                args=[None, dict(frame=dict(duration=500, redraw=True), 
-                                 fromcurrent=True, mode='immediate')]
-            )]
-        )],
+        updatemenus=[
+            dict(
+                type='buttons',
+                showactive=True,
+                buttons=[
+                    dict(
+                        label='Play',
+                        method='animate',
+                        args=[None, dict(frame=dict(duration=0, redraw=True), fromcurrent=True, mode='immediate')]
+                    ),
+                    dict(
+                        label='Pause',
+                        method='animate',
+                        args=[[None], dict(frame=dict(duration=0, redraw=False), mode='immediate', transition=dict(duration=0))]
+                    )
+                ]
+            )
+        ],
         xaxis=dict(range=[min(x) - 1, max(x) + 1]),
         yaxis=dict(range=[min(y) - 1, max(y) + 1])
     )
@@ -103,9 +111,34 @@ def plot_triangles(polygon, triangles):
 
     return fig
 
+def plot_triangles_static(polygon, triangles):
+    x, y = zip(*polygon)
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(x=x + (x[0],), y=y + (y[0],), 
+                             mode='lines+markers', 
+                             name='Polygon'))
+
+    for i, triangle in enumerate(triangles):
+        x_tri, y_tri = zip(*triangle)
+        fig.add_trace(go.Scatter(x=x_tri + (x_tri[0],), y=y_tri + (y_tri[0],), 
+                                 mode='lines', fill='toself',
+                                 name=f'Triangle {i + 1}'))
+
+    fig.update_layout(
+        title="Polygon Final Triangulation",
+        xaxis_title="X Axis",
+        yaxis_title="Y Axis",
+        showlegend=True,
+        xaxis=dict(range=[min(x) - 1, max(x) + 1]),
+        yaxis=dict(range=[min(y) - 1, max(y) + 1])
+    )
+
+    return fig
 
 def animate_triangulation(polygon):
     n = len(polygon)
+    k=0
     if n < 3:
         return []
     remaining_vertices = polygon[:]
@@ -129,7 +162,8 @@ def animate_triangulation(polygon):
                     name='Current possible triangle')
             ]
             
-            frames.append(go.Frame(data=frame_data))
+            frames.append(go.Frame(data=frame_data,name=f'frame_{k}'))
+            k = k + 1
             
             if is_ear(remaining_vertices, i):
                 triangles.append([prev, curr, next])
@@ -147,7 +181,8 @@ def animate_triangulation(polygon):
             name='Current possible triangle')
     ]
     
-    frames.append(go.Frame(data=frame_data))
+    frames.append(go.Frame(data=frame_data,name=f'frame_{k}'))
+    k = k + 1
 
     
     frame_data =[
@@ -176,22 +211,52 @@ def plot_triangulation(polygon):
     frames = animate_triangulation(polygon)
     fig.frames = frames
     fig.update_layout(
-        updatemenus=[dict(
-            type='buttons',
-            showactive=True,
-            buttons=[dict(
-                label='Play',
-                method='animate',
-                args=[None, dict(frame=dict(duration=600, redraw=True), 
-                                 fromcurrent=True, mode='immediate')]
-            )]
-        )],
+        updatemenus=[
+            dict(
+                type='buttons',
+                showactive=True,
+                buttons=[
+                    dict(
+                        label='Play',
+                        method='animate',
+                        args=[None, dict(frame=dict(duration=600, redraw=True), fromcurrent=True, mode='immediate')]
+                    ),
+                    dict(
+                        label='Pause',
+                        method='animate',
+                        args=[[None], dict(frame=dict(duration=0, redraw=False), mode='immediate', transition=dict(duration=0))]
+                    )
+                ]
+            )
+        ],
+        sliders=[
+            dict(
+                steps=[
+                    dict(
+                        method='animate',
+                        args=[
+                            [f'frame_{k}'],
+                            dict(
+                                mode='immediate',
+                                frame=dict(duration=2000, redraw=True),
+                                transition=dict(duration=0)
+                            )
+                        ],
+                        label=f'Slide {k+1}'
+                    ) for k in range(len(frames))
+                ],
+                active=0,
+                transition=dict(duration=0),
+                currentvalue=dict(font=dict(size=12), visible=True, xanchor='center')
+            )
+        ],
         xaxis=dict(range=[min(x) - 1, max(x) + 1]),
-        yaxis=dict(range=[min(y) - 1, max(y) + 1])
-    ),
+        yaxis=dict(range=[min(y) - 1, max(y) + 1]),
+        showlegend=False
+    )
     
     fig.update_layout(
-        title="Triangle",
+        title="Polygon Triangulation",
         showlegend=True
     )
 

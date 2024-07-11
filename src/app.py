@@ -4,6 +4,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 import src.plotting as plotting
 import src.triangulation as triangulation
+import src.cameras as cameras
 import src.vertex_coloring as vertex_coloring
 from src.io_utils import parse_contents,parse_manual_input
 import os
@@ -146,7 +147,7 @@ def update_graph(contents, submit_points_clicks,see_polygon_clicks, triangulate_
     
     if button_id == 'final-triangulate-button' and final_triangles_clicks > 0 and polygon:
         triangles = triangulation.ear_clipping_triangulation(polygon)        
-        fig = triangulation.plot_triangles(polygon,triangles)
+        fig = triangulation.plot_triangles_static(polygon,triangles)
 
         path = f"data/polygon-{len(polygon)}"
         if not os.path.exists(path):
@@ -174,7 +175,7 @@ def update_graph(contents, submit_points_clicks,see_polygon_clicks, triangulate_
         triangles = triangulation.ear_clipping_triangulation(polygon)
         coloring = vertex_coloring.color_vertices(triangles)
         coloring_serializable = {str(k): v for k, v in coloring.items()}
-        fig = plotting.plot_colored_polygon(polygon, coloring)
+        fig = vertex_coloring.plot_colored_polygon(polygon, coloring)
         
         path = f"data/polygon-{len(polygon)}"
         if not os.path.exists(path):
@@ -188,8 +189,8 @@ def update_graph(contents, submit_points_clicks,see_polygon_clicks, triangulate_
         triangles = triangulation.ear_clipping_triangulation(polygon)
         coloring = vertex_coloring.color_vertices(triangles)
         coloring_serializable = {str(k): v for k, v in coloring.items()}
-        camera_positions = vertex_coloring.minimum_camera_positions(triangles)
-        fig = plotting.animate_cameras(polygon, camera_positions)
+        camera_positions = cameras.minimum_camera_positions(triangles)
+        fig = cameras.animate_cameras(polygon, camera_positions)
 
         path = f"data/polygon-{len(polygon)}"
         if not os.path.exists(path):
@@ -207,4 +208,4 @@ def update_graph(contents, submit_points_clicks,see_polygon_clicks, triangulate_
 
 if __name__ == '__main__':
     print("Starting the Dash app server...")
-    app.run_server(debug=True)
+    app.run_server(debug=True,port=8051)
