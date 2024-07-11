@@ -93,7 +93,6 @@
                         const content = htmlDoc.body.innerHTML;
                         polygonGraph.innerHTML = content;
 
-                        // Manually execute scripts
                         const scripts = polygonGraph.querySelectorAll('script');
                         scripts.forEach(script => {
                             const newScript = document.createElement('script');
