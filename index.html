@@ -5,34 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ART GALLERY PROBLEM</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #e6f2ff;
-        }
-        .w-100 {
-            width: 100% !important;
-        }
-        .h-60 {
-            height: 60px !important;
-        }
-        .line-height-60 {
-            line-height: 60px !important;
-        }
-        .mt-10 {
-            margin-top: 10px !important;
-        }
-        .mt-20 {
-            margin-top: 20px !important;
-        }
-        .dashed-border {
-            border-width: 1px;
-            border-style: dashed;
-            border-radius: 5px;
-        }
-        #camera-output {
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container mt-5">
@@ -43,7 +16,7 @@
         </div>
         <div class="row mt-4">
             <div class="col-4">
-                <div class="mb-3">
+                <div class="mb-3 w-100 btn">
                     <label for="polygon-select" class="form-label">Select a Polygon</label>
                     <select class="form-select w-100" id="polygon-select">
                         <option value="polygon-20">20 vertices</option>
@@ -54,13 +27,12 @@
                     </select>
                 </div>
                 <div class="button-group">
-                    <button id="see-polygon-button" class="btn btn-secondary w-100 mt-10">See Polygon</button>
-                    <button id="triangulate-button" class="btn btn-info w-100 mt-10">Triangulate</button>
-                    <button id="final-triangulate-button" class="btn btn-info w-100 mt-10">Final Triangulation</button>
-                    <button id="color-button" class="btn btn-warning w-100 mt-10">Color Vertices</button>
-                    <button id="final-coloring-button" class="btn btn-warning w-100 mt-10">Final Coloring</button>
-                    <button id="camera-button" class="btn btn-danger w-100 mt-10">Cameras</button>
-                    <div id="camera-output" class="mt-20"></div>
+                    <button id="see-polygon-button" class="btn btn-secondary w-100">See Polygon</button>
+                    <button id="triangulate-button" class="btn btn-info w-100">Triangulate</button>
+                    <button id="final-triangulate-button" class="btn btn-info w-100">Final Triangulation</button>
+                    <button id="color-button" class="btn btn-warning w-100">Color Vertices</button>
+                    <button id="final-coloring-button" class="btn btn-warning w-100">Final Coloring</button>
+                    <button id="camera-button" class="btn btn-danger w-100">Cameras</button>
                 </div>
             </div>
             <div class="col-8">
@@ -73,72 +45,6 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const polygonSelect = document.getElementById('polygon-select');
-            const seePolygonButton = document.getElementById('see-polygon-button');
-            const triangulateButton = document.getElementById('triangulate-button');
-            const finalTriangulateButton = document.getElementById('final-triangulate-button');
-            const colorButton = document.getElementById('color-button');
-            const finalColoringButton = document.getElementById('final-coloring-button');
-            const cameraButton = document.getElementById('camera-button');
-            const polygonGraph = document.getElementById('polygon-graph');
-
-            function loadContent(file) {
-                fetch(file)
-                    .then(response => response.text())
-                    .then(data => {
-                        const parser = new DOMParser();
-                        const htmlDoc = parser.parseFromString(data, 'text/html');
-                        const content = htmlDoc.body.innerHTML;
-                        polygonGraph.innerHTML = content;
-
-                        const scripts = polygonGraph.querySelectorAll('script');
-                        scripts.forEach(script => {
-                            const newScript = document.createElement('script');
-                            newScript.type = script.type;
-                            if (script.src) {
-                                newScript.src = script.src;
-                            } else {
-                                newScript.textContent = script.textContent;
-                            }
-                            document.body.appendChild(newScript);
-                            document.body.removeChild(newScript);
-                        });
-                    })
-                    .catch(error => console.error('Error loading the content:', error));
-            }
-
-            seePolygonButton.addEventListener('click', function() {
-                const polygon = polygonSelect.value;
-                loadContent(`data/${polygon}/polygon.html`);
-            });
-
-            triangulateButton.addEventListener('click', function() {
-                const polygon = polygonSelect.value;
-                loadContent(`data/${polygon}/triangulation.html`);
-            });
-
-            finalTriangulateButton.addEventListener('click', function() {
-                const polygon = polygonSelect.value;
-                loadContent(`data/${polygon}/final-triangulation.html`);
-            });
-
-            colorButton.addEventListener('click', function() {
-                const polygon = polygonSelect.value;
-                loadContent(`data/${polygon}/coloring.html`);
-            });
-
-            finalColoringButton.addEventListener('click', function() {
-                const polygon = polygonSelect.value;
-                loadContent(`data/${polygon}/final-coloring.html`);
-            });
-
-            cameraButton.addEventListener('click', function() {
-                const polygon = polygonSelect.value;
-                loadContent(`data/${polygon}/cameras.html`);
-            });
-        });
-    </script>
+    <script src="scripts.js"></script>
 </body>
 </html>
