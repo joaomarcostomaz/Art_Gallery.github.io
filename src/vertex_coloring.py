@@ -1,8 +1,16 @@
 import networkx as nx
 import plotly.graph_objects as go
 
-
 def create_dual_graph(triangles):
+    """
+    Creates a dual graph from a list of triangles.
+
+    Parameters:
+        triangles: A list of triangles. A triangle is a list of vertices.
+
+    Returns:
+        G, trianglesIndexMap: The dual graph and a dictionary where the key is the index of the triangle and the value is the triangle itself.
+    """
     G = nx.Graph()
     
     trianglesIndexMap = {i: tuple(tuple(vertex) for vertex in triangle) for i, triangle in enumerate(triangles)}
@@ -16,6 +24,16 @@ def create_dual_graph(triangles):
     return G, trianglesIndexMap
 
 def plot_colored_polygon(polygon, coloring):
+    """"
+    Plots the polygon with the given coloring.
+
+    Parameters:
+        polygon: A list of vertices.
+        coloring: A dictionary where the key is a vertex and the value is a color.
+
+    Returns:
+        A Plotly figure with the colored polygon.
+    """
     x, y = zip(*polygon)
     colors = [coloring[tuple(vertex)] for vertex in polygon] + [coloring[tuple(polygon[0])]]
     fig = go.Figure()
@@ -31,6 +49,15 @@ def plot_colored_polygon(polygon, coloring):
     return fig
 
 def color_vertices(triangles):
+    """
+    Colors the vertices of a list of triangles using a DFS algorithm.
+
+    Parameters:
+        triangles: A list of triangles, where each triangle is represented as a list of vertices.
+
+    Returns:
+        vertexColors: A dictionary where the key is a vertex and the value is a color.
+    """
     dual_graph, trianglesIndexMap = create_dual_graph(triangles)
     vertexColors = {}
     colorNames = ['purple', 'green', 'blue']
@@ -60,6 +87,16 @@ def color_vertices(triangles):
 
 
 def animate_colorization(triangles,polygon):
+    """
+    Animates the colorization of the polygon.
+
+    Parameters:
+        triangles: A list of triangles, where each triangle is represented as a list of vertices.
+        polygon: A list of vertices.
+
+    Returns:
+        frames: A list of Plotly frames
+    """
     x, y = zip(*polygon)
     dual_graph, trianglesIndexMap = create_dual_graph(triangles)
     k=0
