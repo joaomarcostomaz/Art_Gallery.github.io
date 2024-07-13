@@ -21,15 +21,15 @@ Para executar o projeto localmente, siga estas instruções:
    ```bash
    cd Art_Gallery.github.io/
 
-3. Instale as dependências necessárias:
-   ```bash
-   pip install -r requirements.txt
-
-4. Crie e ative um ambiente virtual (opcional, mas recomendado):
+3. Crie e ative um ambiente virtual (opcional, mas recomendado):
    ```bash
    python -m venv venv       # Cria o ambiente virtual
    source venv/bin/activate  # Ativa o ambiente virtual (Linux/macOS)
    # Ou no Windows use: venv\Scripts\activate
+
+4. Instale as dependências necessárias:
+   ```bash
+   pip install -r requirements.txt
 
 5. Inicie a aplicação:
    ```bash
