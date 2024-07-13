@@ -215,6 +215,17 @@ def animate_colorization(triangles,polygon):
     return frames
 
 def plot_coloring(polygon,triangles):
+    """
+    Plots the polygon with the coloring process.
+
+    Parameters:
+        polygon: A list of vertices.
+        triangles: A list of triangles, where each triangle is represented as a list of vertices.
+
+    Returns:
+        A Plotly figure with the coloring process.
+    """
+
     x, y = zip(*polygon)
     fig = go.Figure()
     
