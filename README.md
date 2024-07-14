@@ -43,4 +43,4 @@ Para executar o projeto localmente, siga estas instruções:
 
 ## Acesso à Página no Github Pages
 
-Para uma visualização dinâmica e interativa do relatório completo e dos processos abordados em nosso trabalho, você pode acessar o GitHub Pages através do seguinte link:[https://joaomarcostomaz.github.io/Art_Gallery.github.io/](https://joaomarcostomaz.github.io/Art_Gallery.github.io/).
+Para uma visualização dinâmica e interativa do relatório completo e dos processos abordados em nosso trabalho, você pode acessar o GitHub Pages através do seguinte link: [https://joaomarcostomaz.github.io/Art_Gallery.github.io/](https://joaomarcostomaz.github.io/Art_Gallery.github.io/).
