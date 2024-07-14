@@ -35,7 +35,7 @@ Para executar o projeto localmente, siga estas instruções:
    ```bash
    python -m src.app
 
-6. Abra um navegador e acesse http://localhost:8051/ para utilizar. Caso essa porta esteja ocupada é necessário alterar no app.py para uma porta livre:
+6. Abra um navegador e acesse http://localhost:8051/ para utilizar. Caso essa porta esteja ocupada é necessário alterar o código no arquivo app.py para rodar em uma porta livre:
    ```bash
    if __name__ == '__main__':
     print("Starting the Dash app server...")
