@@ -5,7 +5,13 @@ body {
     margin-top: 10px;
     margin-left: 30px;
 }
+#report{
+    margin-top: 40px;
+    margin-left: 40px;
+    border: 1px solid black;
+    overflow-x: hidden;
+}
 #polygon-graph{
-    margin-top: 100px;
+    margin-top: 40px;
     margin-left: 40px;
 }
