@@ -35,7 +35,7 @@ Para executar o projeto localmente, siga estas instruções:
    ```bash
    python -m src.app
 
-6. Abra um navegador e acesse http://localhost:5000 (mudar isso) para utilizar.
+6. Abra um navegador e acesse http://localhost:8051/ para utilizar (caso essa porta esteja ocupada é necessário alterar no app.py para uma porta livre).
 
 ## Acesso à Página
 
