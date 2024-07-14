@@ -41,6 +41,6 @@ Para executar o projeto localmente, siga estas instruções:
     print("Starting the Dash app server...")
     app.run_server(debug=True,port=8051) # Mude a porta aqui
 
-## Acesso à Página
+## Acesso à Página no Github Pages
 
-Visite a página do trabalho em [https://joaomarcostomaz.github.io/Art_Gallery.github.io/](https://joaomarcostomaz.github.io/Art_Gallery.github.io/).
+Para uma visualização dinâmica e interativa do relatório completo e dos processos abordados em nosso trabalho, você pode acessar o GitHub Pages através do seguinte link:[https://joaomarcostomaz.github.io/Art_Gallery.github.io/](https://joaomarcostomaz.github.io/Art_Gallery.github.io/).
