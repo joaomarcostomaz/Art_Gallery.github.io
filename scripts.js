@@ -6,6 +6,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const colorButton = document.getElementById('color-button');
     const finalColoringButton = document.getElementById('final-coloring-button');
     const cameraButton = document.getElementById('camera-button');
+    const problemDescriptionButton = document.getElementById('problem-description-button');
+    const triangulationDescriptionButton = document.getElementById('triangulation-description-button');
+    const coloringDescriptionButton = document.getElementById('coloring-description-button');
+    const camerasDescriptionButton = document.getElementById('cameras-description-button');
     const polygonGraph = document.getElementById('polygon-graph');
 
     function loadContent(file) {
@@ -61,5 +65,29 @@ document.addEventListener("DOMContentLoaded", function() {
     cameraButton.addEventListener('click', function() {
         const polygon = polygonSelect.value;
         loadContent(`data/${polygon}/cameras.html`);
+    });
+
+    problemDescriptionButton.addEventListener('click', function() {
+        const text = 'a completar';
+        const content = `<h2>Descrição do problema</h2><p>${text}</p>`;
+        polygonGraph.innerHTML = content;
+    });
+
+    triangulationDescriptionButton.addEventListener('click', function() {
+        const text = 'a completar';
+        const content = `<h2>Descrição da triangulação</h2><p>${text}</p>`;
+        polygonGraph.innerHTML = content;
+    });
+
+    coloringDescriptionButton.addEventListener('click', function() {
+        const text = 'a completar';
+        const content = `<h2>Descrição da coloração</h2><p>${text}</p>`;
+        polygonGraph.innerHTML = content;
+    });
+
+    camerasDescriptionButton.addEventListener('click', function() {
+        const text = 'a completar';
+        const content = `<h2>Descrição da distribuição de câmeras</h2><p>${text}</p>`;
+        polygonGraph.innerHTML = content;
     });
 });
