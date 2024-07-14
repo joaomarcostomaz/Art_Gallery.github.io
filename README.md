@@ -1,11 +1,11 @@
 
 # Art Gallery
 
-Este é um projeto da materia sla sla
+Este é um projeto da disciplina Algoritmos 2, ministrada pelo professor Renato Vimiero. O projeto foi desenvolvido pelos alunos Diogo Tuler, João Marcos Tomaz e Rafael Martins.
 
 ## Ideia do Projeto
 
-Aqui colocamos a ideia do projeto
+O projeto diz respeito a solucionar o Problema da Galeria de Arte. Dada uma galeria de arte (aqui representada por um polígono), queremos encontrar o menor número de câmeras que cubram todo o espaço da galeria, i.e., todos os lados do polígono.
 
 ## Como Executar
 
